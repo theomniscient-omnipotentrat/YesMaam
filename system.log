@@ -1,0 +1,27 @@
+2026-04-21 00:09:49 [DEBUG] matplotlib: matplotlib data path: C:\Users\ssamu\PycharmProjects\Downloads\Lib\site-packages\matplotlib\mpl-data
+2026-04-21 00:09:49 [DEBUG] matplotlib: CONFIGDIR=C:\Users\ssamu\.matplotlib
+2026-04-21 00:09:49 [DEBUG] matplotlib: interactive is False
+2026-04-21 00:09:49 [DEBUG] matplotlib: platform is win32
+2026-04-21 00:09:49 [DEBUG] matplotlib: CACHEDIR=C:\Users\ssamu\.matplotlib
+2026-04-21 00:09:49 [DEBUG] matplotlib.font_manager: Using fontManager instance from C:\Users\ssamu\.matplotlib\fontlist-v390.json
+2026-04-21 00:24:32 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
+2026-04-21 00:24:32 [INFO] attendance_system.attendance: Attendance file created at C:\Users\ssamu\Downloads\Rasp\attendance.csv
+2026-04-21 00:24:32 [INFO] attendance_system.main: System bootstrap complete.
+2026-04-21 00:25:08 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
+2026-04-21 00:25:08 [INFO] attendance_system.main: System bootstrap complete.
+2026-04-21 00:25:19 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
+2026-04-21 00:25:19 [INFO] attendance_system.main: System bootstrap complete.
+2026-04-21 00:25:57 [INFO] attendance_system: Camera 0 opened (640x480)
+2026-04-21 00:26:46 [INFO] attendance_system: Camera released.
+2026-04-21 00:26:46 [INFO] attendance_system.database: Student added: Samuel George — Samuel
+2026-04-21 00:26:59 [INFO] attendance_system: Camera 0 opened (640x480)
+2026-04-21 00:27:14 [INFO] attendance_system: Camera released.
+2026-04-21 00:27:16 [INFO] attendance_system: Camera 0 opened (640x480)
+2026-04-21 00:27:17 [INFO] attendance_system.attendance: Attendance marked — Samuel George (Samuel) at 2026-04-21 00:27:17
+2026-04-21 00:27:17 [INFO] attendance_system.recognize: Marked attendance — Samuel George (Samuel)  conf=68.5
+2026-04-21 00:27:36 [INFO] attendance_system: Camera released.
+2026-04-21 00:27:44 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
+2026-04-21 00:28:06 [INFO] attendance_system.recognize: Loading cached model from C:\Users\ssamu\Downloads\Rasp\face_model.yml
+2026-04-21 00:28:08 [INFO] attendance_system: Camera 0 opened (640x480)
+2026-04-21 00:28:14 [INFO] attendance_system: Camera released.
+2026-04-21 00:30:50 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
