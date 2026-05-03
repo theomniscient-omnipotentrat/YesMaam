@@ -1,0 +1,21 @@
+2026-05-03 19:36:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV3\attendance_system.db
+2026-05-03 19:36:26 [INFO] attendance_system.main: System bootstrap complete (v3).
+2026-05-03 19:36:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV3\attendance_system.db
+2026-05-03 19:36:26 [INFO] attendance_system.main: System bootstrap complete (v3).
+2026-05-03 19:36:57 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc)
+2026-05-03 19:37:00 [INFO] attendance_system.detector: Downloading YuNet model …
+2026-05-03 19:37:01 [INFO] attendance_system.detector: YuNet model saved: C:\Users\ssamu\Downloads\raspV3\models\face_detection_yunet_2023mar.onnx
+2026-05-03 19:38:44 [INFO] attendance_system.database: Student added: 1 — sam
+2026-05-03 19:38:44 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-03 19:38:44 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-03 19:38:44 [INFO] attendance_system.enroll: Enrolled 1 (sam) — 5 shots
+2026-05-03 19:38:54 [INFO] attendance_system.camera: FrameConsumer started.
+2026-05-03 19:38:54 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-03 19:38:54 [INFO] attendance_system.camera: AttendancePipeline started.
+2026-05-03 19:38:56 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-03 19:38:58 [INFO] attendance_system.database: Attendance marked: 1 (sam) at 2026-05-03 19:38:58
+2026-05-03 19:38:58 [INFO] attendance_system.camera: Marked: 1 (sam)
+2026-05-03 19:39:14 [INFO] attendance_system.camera: FrameConsumer stopped.
+2026-05-03 19:39:14 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-03 19:39:14 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-03 19:39:14 [INFO] attendance_system.camera: AttendancePipeline stopped.

@@ -1,17 +1,18 @@
-# ──────────────────────────────────────────────────────────────────
-# requirements.txt — Face Recognition Attendance System
-# Install with:  pip install -r requirements.txt
-# ──────────────────────────────────────────────────────────────────
+# requirements.txt — Face Recognition Attendance System v2
+# pip install -r requirements.txt
 
 # Core vision
-opencv-python>=4.8.0        # use opencv-python-headless on headless Pi
-opencv-contrib-python>=4.8.0  # provides cv2.face.LBPHFaceRecognizer
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0   # provides cv2.face (LBPH fallback) + YuNet
+
+# Deep learning inference
+onnxruntime>=1.16.0            # CPU inference — no GPU needed
 
 # Numerics
 numpy>=1.24.0
 
-# Raspberry Pi GPIO (comment out on non-Pi systems)
-# RPi.GPIO>=0.7.0
+# Reporting (optional — stdlib csv is used if pandas not present)
+pandas>=2.0.0
 
-# Optional: Tkinter GUI (usually pre-installed with Python on Pi)
-# tk is part of the stdlib; no pip install needed
+# SMTP email is stdlib — no extra package needed
+# SQLite3 is stdlib — no extra package needed
