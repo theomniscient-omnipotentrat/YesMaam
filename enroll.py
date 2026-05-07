@@ -62,7 +62,7 @@ class _EnrollProducer(threading.Thread):
         self.stop_event.set()
 
     def run(self) -> None:
-        cap = cv2.VideoCapture(config.CAMERA_INDEX)
+        cap = cv2.VideoCapture(config.CAMERA_INDEX, cv2.CAP_V4L2)
         if not cap.isOpened():
             logger.error("EnrollProducer: cannot open camera.")
             try:
