@@ -372,7 +372,7 @@ def enroll_student(student_id: str = "", student_name: str = "") -> bool:
         cv2.imshow(win_title, frame)
 
         # OPTIMIZATION: waitKey(20) — same as Recognition.py
-        key = cv2.waitKey(20) & 0xFF
+        key = cv2.waitKey(30) & 0xFF
         if key in (ord("q"), 27):
             aborted = True
             try:
