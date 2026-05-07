@@ -1,114 +1,210 @@
 """
-database.py — Student record persistence using SQLite.
+database.py — Unified SQLite database: students + embeddings + attendance.
+
+Thread safety
+-------------
+All writes are serialised through _write_lock (threading.Lock).
+WAL journal mode allows concurrent reads alongside a write.
+Each call opens its own connection and closes it on exit (connection-per-call
+pattern avoids "database is locked" errors in multi-threaded use).
 
 Schema
 ------
-students(id TEXT PK, name TEXT, enrolled_at TEXT, image_count INT)
+students   (id, name, enrolled_at, image_count, embedding BLOB)
+attendance (id, student_id, student_name, date, time, status)
+
+Indexes
+-------
+idx_student_date ON attendance(student_id, date)  -- duplicate check
+idx_date         ON attendance(date)              -- per-date queries
 """
 
-import os
-import sqlite3
 import logging
-from typing import Optional, List, Tuple
+import pickle
+import sqlite3
+import threading
+from contextlib import contextmanager
+from datetime import datetime
+from typing import Generator, List, Optional
+
+import numpy as np
 
 import config
 import utils
 
 logger = logging.getLogger("attendance_system.database")
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Connection helper
-# ──────────────────────────────────────────────────────────────────
-
-def _connect() -> sqlite3.Connection:
-    """Return a new SQLite connection with row-factory set."""
-    conn = sqlite3.connect(config.STUDENTS_DB)
-    conn.row_factory = sqlite3.Row
-    return conn
+_write_lock = threading.Lock()
 
 
-# ──────────────────────────────────────────────────────────────────
-#  Initialisation
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Connection context manager
+# ─────────────────────────────────────────────────────────────────
+
+@contextmanager
+def _conn() -> Generator[sqlite3.Connection, None, None]:
+    """
+    Yield a WAL-mode SQLite connection that commits on success,
+    rolls back on exception, and always closes.
+    """
+    con = sqlite3.connect(config.DATABASE_FILE, check_same_thread=False, timeout=10)
+    con.row_factory = sqlite3.Row
+    con.execute("PRAGMA journal_mode=WAL;")
+    con.execute("PRAGMA foreign_keys=ON;")
+    try:
+        yield con
+        con.commit()
+    except Exception:
+        con.rollback()
+        raise
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────────────
+#  Schema init
+# ─────────────────────────────────────────────────────────────────
 
 def init_db() -> None:
-    """Create tables if they don't already exist."""
-    utils.ensure_dir(os.path.dirname(config.STUDENTS_DB) or ".")
-    with _connect() as conn:
-        conn.execute("""
+    """Create tables and indexes. Safe to call multiple times (idempotent)."""
+    import os
+    os.makedirs(os.path.dirname(config.DATABASE_FILE) or ".", exist_ok=True)
+
+    with _conn() as con:
+        con.execute("""
             CREATE TABLE IF NOT EXISTS students (
-                id           TEXT PRIMARY KEY,
-                name         TEXT NOT NULL,
-                enrolled_at  TEXT NOT NULL,
-                image_count  INTEGER DEFAULT 0
-            )
-        """)
-        conn.commit()
-    logger.info("Database initialised at %s", config.STUDENTS_DB)
+                id          TEXT PRIMARY KEY,
+                name        TEXT NOT NULL,
+                enrolled_at TEXT NOT NULL,
+                image_count INTEGER NOT NULL DEFAULT 0,
+                embedding   BLOB
+            )""")
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS attendance (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_id   TEXT NOT NULL,
+                student_name TEXT NOT NULL,
+                date         TEXT NOT NULL,
+                time         TEXT NOT NULL,
+                status       TEXT NOT NULL DEFAULT 'Present'
+            )""")
+        con.execute("""
+            CREATE INDEX IF NOT EXISTS idx_student_date
+            ON attendance(student_id, date)""")
+        con.execute("""
+            CREATE INDEX IF NOT EXISTS idx_date
+            ON attendance(date)""")
+
+    logger.info("Database ready: %s", config.DATABASE_FILE)
 
 
-# ──────────────────────────────────────────────────────────────────
-#  CRUD
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Embedding serialisation
+# ─────────────────────────────────────────────────────────────────
 
-def add_student(student_id: str, name: str, image_count: int = 0) -> bool:
-    """
-    Insert a new student record.
-    Returns True on success, False if ID already exists.
-    """
+def _emb_to_blob(emb: np.ndarray) -> bytes:
+    return pickle.dumps(emb.astype(np.float32))
+
+
+def _blob_to_emb(blob: bytes) -> np.ndarray:
+    return pickle.loads(blob).astype(np.float32)
+
+
+# ─────────────────────────────────────────────────────────────────
+#  Student CRUD
+# ─────────────────────────────────────────────────────────────────
+
+def add_student(
+    student_id: str,
+    name: str,
+    image_count: int = 0,
+    embedding: Optional[np.ndarray] = None,
+) -> bool:
+    """Insert student. Returns False if ID already exists."""
+    blob = _emb_to_blob(embedding) if embedding is not None else None
+    now  = utils.current_datetime()
     try:
-        with _connect() as conn:
-            conn.execute(
-                "INSERT INTO students (id, name, enrolled_at, image_count) VALUES (?, ?, ?, ?)",
-                (student_id, name, utils.current_datetime(), image_count),
-            )
-            conn.commit()
+        with _write_lock:
+            with _conn() as con:
+                con.execute(
+                    "INSERT INTO students (id, name, enrolled_at, image_count, embedding)"
+                    " VALUES (?,?,?,?,?)",
+                    (student_id, name, now, image_count, blob),
+                )
         logger.info("Student added: %s — %s", student_id, name)
         return True
     except sqlite3.IntegrityError:
-        logger.warning("Student ID '%s' already exists.", student_id)
+        logger.warning("Student '%s' already exists.", student_id)
         return False
 
 
-def update_image_count(student_id: str, count: int) -> None:
-    """Update the stored image count for a student."""
-    with _connect() as conn:
-        conn.execute(
-            "UPDATE students SET image_count = ? WHERE id = ?",
-            (count, student_id),
-        )
-        conn.commit()
+def update_student_embedding(
+    student_id: str,
+    embedding: np.ndarray,
+    image_count: int = 0,
+) -> None:
+    """Update embedding (and image count) for an existing student."""
+    blob = _emb_to_blob(embedding)
+    with _write_lock:
+        with _conn() as con:
+            con.execute(
+                "UPDATE students SET embedding=?, image_count=? WHERE id=?",
+                (blob, image_count, student_id),
+            )
+    logger.debug("Embedding updated: %s", student_id)
 
 
 def get_student(student_id: str) -> Optional[dict]:
-    """Return student dict or None."""
-    with _connect() as conn:
-        row = conn.execute(
-            "SELECT * FROM students WHERE id = ?", (student_id,)
-        ).fetchone()
-    return dict(row) if row else None
-
-
-def get_all_students() -> List[dict]:
-    """Return list of all student records as dicts."""
-    with _connect() as conn:
-        rows = conn.execute(
-            "SELECT * FROM students ORDER BY enrolled_at DESC"
-        ).fetchall()
-    return [dict(r) for r in rows]
+    """Return student dict (embedding decoded) or None."""
+    with _conn() as con:
+        row = con.execute("SELECT * FROM students WHERE id=?", (student_id,)).fetchone()
+    if not row:
+        return None
+    d = dict(row)
+    if d.get("embedding"):
+        d["embedding"] = _blob_to_emb(d["embedding"])
+    return d
 
 
 def student_exists(student_id: str) -> bool:
-    """Quick existence check."""
-    return get_student(student_id) is not None
+    with _conn() as con:
+        row = con.execute("SELECT 1 FROM students WHERE id=?", (student_id,)).fetchone()
+    return row is not None
+
+
+def get_all_students() -> List[dict]:
+    """Return all student records with embeddings decoded."""
+    with _conn() as con:
+        rows = con.execute("SELECT * FROM students ORDER BY enrolled_at DESC").fetchall()
+    result = []
+    for row in rows:
+        d = dict(row)
+        if d.get("embedding"):
+            d["embedding"] = _blob_to_emb(d["embedding"])
+        result.append(d)
+    return result
+
+
+def get_all_embeddings() -> List[tuple]:
+    """
+    Return [(student_id, student_name, embedding_ndarray), …].
+    Excludes students with no embedding.
+    """
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT id, name, embedding FROM students WHERE embedding IS NOT NULL"
+        ).fetchall()
+    return [
+        (row["id"], row["name"], _blob_to_emb(row["embedding"]))
+        for row in rows
+    ]
 
 
 def delete_student(student_id: str) -> bool:
-    """Delete a student record. Returns True if a row was deleted."""
-    with _connect() as conn:
-        cur = conn.execute("DELETE FROM students WHERE id = ?", (student_id,))
-        conn.commit()
+    """Delete student record. Returns True if a row was deleted."""
+    with _write_lock:
+        with _conn() as con:
+            cur = con.execute("DELETE FROM students WHERE id=?", (student_id,))
     deleted = cur.rowcount > 0
     if deleted:
         logger.info("Student %s deleted.", student_id)
@@ -116,24 +212,137 @@ def delete_student(student_id: str) -> bool:
 
 
 def get_student_count() -> int:
-    """Return total number of enrolled students."""
-    with _connect() as conn:
-        row = conn.execute("SELECT COUNT(*) FROM students").fetchone()
+    with _conn() as con:
+        row = con.execute("SELECT COUNT(*) FROM students").fetchone()
     return row[0] if row else 0
 
 
-# ──────────────────────────────────────────────────────────────────
-#  Display helpers
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Attendance
+# ─────────────────────────────────────────────────────────────────
+
+def mark_attendance(student_id: str, student_name: str) -> bool:
+    """
+    Mark student present today (once only per day).
+    Thread-safe.  Returns True when a new record was written.
+    """
+    today = utils.current_date()
+    now   = utils.current_time()
+
+    # Fast duplicate check (read — no lock needed in WAL mode)
+    with _conn() as con:
+        dup = con.execute(
+            "SELECT 1 FROM attendance WHERE student_id=? AND date=?",
+            (student_id, today),
+        ).fetchone()
+    if dup:
+        logger.debug("Duplicate skip: %s on %s", student_id, today)
+        return False
+
+    with _write_lock:
+        # Re-check inside lock to close the TOCTOU window
+        with _conn() as con:
+            dup2 = con.execute(
+                "SELECT 1 FROM attendance WHERE student_id=? AND date=?",
+                (student_id, today),
+            ).fetchone()
+            if dup2:
+                return False
+            con.execute(
+                "INSERT INTO attendance (student_id, student_name, date, time, status)"
+                " VALUES (?,?,?,?,'Present')",
+                (student_id, student_name, today, now),
+            )
+    logger.info("Attendance marked: %s (%s) at %s %s", student_id, student_name, today, now)
+    return True
+
+
+def get_attendance_by_date(date: Optional[str] = None) -> List[dict]:
+    """Return all attendance records for a date (default: today)."""
+    date = date or utils.current_date()
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT * FROM attendance WHERE date=? ORDER BY time",
+            (date,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_attendance_by_student(student_id: str) -> List[dict]:
+    """Return all attendance history for one student, newest first."""
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT * FROM attendance WHERE student_id=? ORDER BY date DESC, time DESC",
+            (student_id,),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_all_students_attendance() -> List[dict]:
+    """Aggregated (student_id, student_name, total_present) across all time."""
+    with _conn() as con:
+        rows = con.execute(
+            """SELECT student_id, student_name, COUNT(*) AS total_present
+               FROM attendance GROUP BY student_id ORDER BY student_name"""
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_attendance_between(start: str, end: str) -> List[dict]:
+    """Return all records between two ISO dates inclusive."""
+    with _conn() as con:
+        rows = con.execute(
+            "SELECT * FROM attendance WHERE date>=? AND date<=? ORDER BY date, time",
+            (start, end),
+        ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def get_present_count_between(student_id: str, start: str, end: str) -> int:
+    """Count attendance records for one student in a date range."""
+    with _conn() as con:
+        row = con.execute(
+            "SELECT COUNT(*) FROM attendance WHERE student_id=? AND date>=? AND date<=?",
+            (student_id, start, end),
+        ).fetchone()
+    return row[0] if row else 0
+
+
+def is_marked_today(student_id: str) -> bool:
+    return bool(get_attendance_by_date() and any(
+        r["student_id"] == student_id for r in get_attendance_by_date()
+    ))
+
+
+# ─────────────────────────────────────────────────────────────────
+#  Pretty-print helpers
+# ─────────────────────────────────────────────────────────────────
 
 def print_all_students() -> None:
-    """Pretty-print the student table to stdout."""
     students = get_all_students()
     if not students:
-        print("  No students enrolled yet.")
+        print("  No students enrolled.")
         return
-    print(f"\n  {'ID':<12} {'Name':<25} {'Images':>6}  {'Enrolled At'}")
-    print("  " + "-" * 65)
+    print(f"\n  {'ID':<12} {'Name':<25} {'Imgs':>4}  {'Emb':^5}  Enrolled")
+    print("  " + "─" * 65)
     for s in students:
-        print(f"  {s['id']:<12} {s['name']:<25} {s['image_count']:>6}  {s['enrolled_at']}")
+        has_emb = "✓" if s.get("embedding") is not None else "✗"
+        print(f"  {s['id']:<12} {s['name']:<25} {s['image_count']:>4}  {has_emb:^5}  {s['enrolled_at']}")
+    print()
+
+
+def print_attendance(date: Optional[str] = None) -> None:
+    date    = date or utils.current_date()
+    records = get_attendance_by_date(date)
+    print(f"\n  Attendance — {date}")
+    print("  " + "═" * 55)
+    if not records:
+        print("  No records found.")
+    else:
+        print(f"  {'#':<4} {'ID':<12} {'Name':<25} {'Time':<10} Status")
+        print("  " + "─" * 55)
+        for i, r in enumerate(records, 1):
+            print(f"  {i:<4} {r['student_id']:<12} {r['student_name']:<25}"
+                  f" {r['time']:<10} {r['status']}")
+        print(f"\n  Total present: {len(records)}")
     print()

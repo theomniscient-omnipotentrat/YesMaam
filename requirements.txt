@@ -1,17 +1,45 @@
-# ──────────────────────────────────────────────────────────────────
-# requirements.txt — Face Recognition Attendance System
-# Install with:  pip install -r requirements.txt
-# ──────────────────────────────────────────────────────────────────
+# requirements.txt — Face Recognition Attendance System v5
+# pip install -r requirements.txt
 
-# Core vision
-opencv-python>=4.8.0        # use opencv-python-headless on headless Pi
-opencv-contrib-python>=4.8.0  # provides cv2.face.LBPHFaceRecognizer
+# ── Core vision ───────────────────────────────────────────────────
+# Note: install ONLY ONE of the two lines below (not both).
+# opencv-python ships without extra contrib modules (smaller, recommended).
+# opencv-contrib-python adds LBPH + extra codecs if needed.
+opencv-python>=4.8.0
+# opencv-contrib-python>=4.8.0
 
-# Numerics
+# ── Deep learning inference ───────────────────────────────────────
+# CPU-only (Pi 5):
+onnxruntime>=1.16.0
+# GPU (desktop with CUDA 12):
+# onnxruntime-gpu>=1.16.0
+
+# ── Face recognition ─────────────────────────────────────────────
+# InsightFace loads the ArcFace 'buffalo_sc' model (~150 MB on first run).
+# allowed_modules=['recognition'] is set in embeddings.py, so only the
+# recognition ONNX is downloaded — NOT RetinaFace (~400 MB saved).
+insightface>=0.7.3
+
+# ── Numerics ─────────────────────────────────────────────────────
 numpy>=1.24.0
 
-# Raspberry Pi GPIO (comment out on non-Pi systems)
-# RPi.GPIO>=0.7.0
+# ── Reporting (optional) ─────────────────────────────────────────
+# stdlib csv is used by default; pandas is only needed for advanced reports.
+# pandas>=2.0.0
 
-# Optional: Tkinter GUI (usually pre-installed with Python on Pi)
-# tk is part of the stdlib; no pip install needed
+# ── GUI ───────────────────────────────────────────────────────────
+# tkinter is bundled with Python on Pi OS (python3-tk).
+# If missing: sudo apt install python3-tk
+# No pip install needed for tkinter itself.
+
+# ── stdlib modules used (no install needed) ───────────────────────
+# sqlite3    — database
+# smtplib    — email dispatch
+# csv        — report output
+# multiprocessing — FrameConsumer process (Pi 5 GIL bypass)
+# threading  — producer + attendance worker threads
+# queue      — intra-process communication
+
+# ── Raspberry Pi GPIO (optional) ─────────────────────────────────
+# Uncomment if USE_GPIO = True in config.py
+# RPi.GPIO>=0.7.1

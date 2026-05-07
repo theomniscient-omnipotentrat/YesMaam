@@ -1,47 +1,50 @@
 """
-utils.py — Shared helper functions: logging setup, date/time, file I/O,
-           GPIO feedback, and frame annotation utilities.
+utils.py — Shared utility functions for Face Attendance System v4.
+
+Provides
+--------
+• Logging setup (call setup_logging() once at startup)
+• Date / time helpers
+• Directory helpers
+• OpenCV drawing helpers  ← moved here from detector.py so all modules share them
+• GPIO feedback (Raspberry Pi)
+• Student dataset directory helpers
 """
 
-import os
-import cv2
 import logging
-import numpy as np
+import os
 from datetime import datetime
-from typing import Tuple, Optional
+from typing import Optional, Tuple
+
+import cv2
+import numpy as np
 
 import config
 
-
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 #  Logging
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 
-def setup_logging() -> logging.Logger:
-    """Configure root logger to write to both console and log file."""
+def setup_logging() -> None:
+    """Configure root logger to write to file and console. Call once at startup."""
     os.makedirs(os.path.dirname(config.LOG_FILE) or ".", exist_ok=True)
-
     logging.basicConfig(
         level=config.LOG_LEVEL,
         format=config.LOG_FORMAT,
         datefmt=config.LOG_DATEFMT,
         handlers=[
-            logging.FileHandler(config.LOG_FILE),
+            logging.FileHandler(config.LOG_FILE, encoding="utf-8"),
             logging.StreamHandler(),
         ],
     )
-    return logging.getLogger("attendance_system")
 
 
-logger = setup_logging()
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Date / Time helpers
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Date / time
+# ─────────────────────────────────────────────────────────────────
 
 def current_date() -> str:
-    """Return today's date as YYYY-MM-DD."""
+    """Return today as YYYY-MM-DD."""
     return datetime.now().strftime("%Y-%m-%d")
 
 
@@ -55,197 +58,171 @@ def current_datetime() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def timestamp_for_filename() -> str:
+def timestamp_filename() -> str:
     """Return a filesystem-safe timestamp string."""
     return datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 
 
-# ──────────────────────────────────────────────────────────────────
-#  File / directory helpers
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Directory helpers
+# ─────────────────────────────────────────────────────────────────
 
 def ensure_dir(path: str) -> None:
-    """Create directory (and parents) if it does not exist."""
+    """Create directory and all parents if they don't exist."""
     os.makedirs(path, exist_ok=True)
 
 
 def student_image_dir(student_id: str, student_name: str) -> str:
-    """Return and create the dataset folder for a student."""
-    folder_name = f"{student_id}_{student_name.replace(' ', '_')}"
-    path = os.path.join(config.DATASET_DIR, folder_name)
+    """Return (and create) the dataset sub-folder for one student."""
+    folder = f"{student_id}_{student_name.replace(' ', '_')}"
+    path   = os.path.join(config.DATASET_DIR, folder)
     ensure_dir(path)
     return path
 
 
 def list_student_dirs() -> list:
-    """Return list of (student_id, student_name, dir_path) tuples."""
+    """
+    Scan DATASET_DIR and return [(student_id, student_name, dir_path), …].
+    Folder name format: <id>_<name_with_underscores>
+    """
     if not os.path.isdir(config.DATASET_DIR):
         return []
-    entries = []
+    results = []
     for entry in sorted(os.listdir(config.DATASET_DIR)):
         full = os.path.join(config.DATASET_DIR, entry)
         if os.path.isdir(full) and "_" in entry:
             sid, *name_parts = entry.split("_")
             sname = " ".join(name_parts)
-            entries.append((sid, sname, full))
-    return entries
+            results.append((sid, sname, full))
+    return results
 
 
-def count_images_in_dir(directory: str) -> int:
-    """Count .jpg / .png images in a directory."""
-    exts = {".jpg", ".jpeg", ".png"}
-    return sum(
-        1 for f in os.listdir(directory)
-        if os.path.splitext(f)[1].lower() in exts
-    )
+# ─────────────────────────────────────────────────────────────────
+#  OpenCV drawing helpers  (shared by detector.py, camera.py, enroll.py)
+# ─────────────────────────────────────────────────────────────────
 
-
-# ──────────────────────────────────────────────────────────────────
-#  Camera helpers
-# ──────────────────────────────────────────────────────────────────
-
-def open_camera(index: int = config.CAMERA_INDEX) -> Optional[cv2.VideoCapture]:
-    """Open camera, set resolution, return cap or None on failure."""
-    import time
-    cap = cv2.VideoCapture(index)
-    if not cap.isOpened():
-        logger.error("Cannot open camera index %d", index)
-        return None
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH,  config.FRAME_WIDTH)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, config.FRAME_HEIGHT)
-    cap.set(cv2.CAP_PROP_FPS, config.TARGET_FPS)
-    time.sleep(config.CAMERA_WARMUP_SECS)
-    logger.info("Camera %d opened (%dx%d)", index, config.FRAME_WIDTH, config.FRAME_HEIGHT)
-    return cap
-
-
-def release_camera(cap: Optional[cv2.VideoCapture]) -> None:
-    """Safely release camera and destroy windows."""
-    if cap is not None:
-        cap.release()
-    cv2.destroyAllWindows()
-    logger.info("Camera released.")
-
-
-def read_frame(cap: cv2.VideoCapture) -> Tuple[bool, Optional[np.ndarray]]:
-    """Read one frame; return (success, frame)."""
-    ret, frame = cap.read()
-    if not ret:
-        logger.warning("Failed to read frame from camera.")
-    return ret, frame
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Frame processing
-# ──────────────────────────────────────────────────────────────────
-
-def resize_frame(frame: np.ndarray, scale: float = config.FRAME_SCALE) -> np.ndarray:
-    """Downscale frame for faster processing."""
-    h, w = frame.shape[:2]
-    return cv2.resize(frame, (int(w * scale), int(h * scale)))
-
-
-def draw_fps(frame: np.ndarray, fps: float) -> None:
-    """Overlay FPS counter (top-left)."""
-    cv2.putText(
-        frame, f"FPS: {fps:.1f}",
-        (10, 25),
-        config.FONT, config.FONT_SCALE_SMALL,
-        config.COLOR_CYAN, 1, cv2.LINE_AA,
-    )
-
-
-def draw_label(
+def put_text_bg(
     frame: np.ndarray,
     text: str,
     pos: Tuple[int, int],
-    color: Tuple[int, int, int] = config.COLOR_GREEN,
+    color: Tuple[int, int, int] = config.COLOR_WHITE,
     scale: float = config.FONT_SCALE_SMALL,
+    thickness: int = 1,
 ) -> None:
-    """Draw text with a dark background for readability."""
-    font, thickness = config.FONT, 1
+    """
+    Draw text with a solid black background rectangle for readability.
+
+    Parameters
+    ----------
+    frame     : BGR image to draw on (in-place)
+    text      : string to render
+    pos       : (x, y) bottom-left corner of the text
+    color     : BGR foreground colour
+    scale     : font scale factor
+    thickness : text stroke thickness
+    """
+    font = config.FONT
     (tw, th), baseline = cv2.getTextSize(text, font, scale, thickness)
     x, y = pos
-    cv2.rectangle(frame, (x, y - th - baseline - 2), (x + tw, y + baseline), config.COLOR_BLACK, cv2.FILLED)
+    # Background rectangle
+    cv2.rectangle(
+        frame,
+        (x, y - th - baseline - 2),
+        (x + tw + 2, y + baseline + 2),
+        config.COLOR_BLACK,
+        cv2.FILLED,
+    )
     cv2.putText(frame, text, (x, y), font, scale, color, thickness, cv2.LINE_AA)
 
 
-def draw_bounding_box(
+def draw_bbox(
     frame: np.ndarray,
-    x1: int, y1: int, x2: int, y2: int,
+    x: int, y: int, w: int, h: int,
     label: str,
     color: Tuple[int, int, int] = config.COLOR_GREEN,
 ) -> None:
-    """Draw a bounding box + label on frame."""
-    cv2.rectangle(frame, (x1, y1), (x2, y2), color, config.THICKNESS)
-    draw_label(frame, label, (x1, y1 - 5), color)
+    """Draw a labelled bounding box on `frame` in-place."""
+    cv2.rectangle(frame, (x, y), (x + w, y + h), color, config.THICKNESS)
+    put_text_bg(frame, label, (x, y - 6), color)
 
 
-# ──────────────────────────────────────────────────────────────────
-#  GPIO feedback (optional — Raspberry Pi only)
-# ──────────────────────────────────────────────────────────────────
+def draw_hud(frame: np.ndarray, fps: float, n_faces: int, extra: str = "") -> None:
+    """Draw the standard FPS / face-count HUD on a frame."""
+    h = frame.shape[0]
+    put_text_bg(frame, f"FPS: {fps:.1f}", (10, 25), config.COLOR_CYAN, 0.5)
+    put_text_bg(frame, f"Faces: {n_faces}", (10, 48), config.COLOR_WHITE, 0.5)
+    hint = extra or "[Q] quit  [S] snapshot  |  v4"
+    put_text_bg(frame, hint, (10, h - 12), config.COLOR_WHITE, 0.40)
 
-_gpio_initialised = False
+
+# ─────────────────────────────────────────────────────────────────
+#  GPIO feedback  (Raspberry Pi only)
+# ─────────────────────────────────────────────────────────────────
+
+_gpio_ready = False
+_gpio_logger = logging.getLogger("attendance_system.gpio")
 
 
 def gpio_setup() -> bool:
-    """Initialise GPIO pins. Returns True on success."""
-    global _gpio_initialised
-    if not config.USE_GPIO or _gpio_initialised:
-        return _gpio_initialised
+    """Initialise GPIO pins. Returns True on success, False if unavailable."""
+    global _gpio_ready
+    if not config.USE_GPIO or _gpio_ready:
+        return _gpio_ready
     try:
         import RPi.GPIO as GPIO  # type: ignore
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-        GPIO.setup(config.GPIO_LED_PIN, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(config.GPIO_LED_PIN,    GPIO.OUT, initial=GPIO.LOW)
         GPIO.setup(config.GPIO_BUZZER_PIN, GPIO.OUT, initial=GPIO.LOW)
-        _gpio_initialised = True
-        logger.info("GPIO initialised (LED=%d, BUZZER=%d)", config.GPIO_LED_PIN, config.GPIO_BUZZER_PIN)
+        _gpio_ready = True
+        _gpio_logger.info("GPIO ready (LED=%d, BUZZER=%d)",
+                          config.GPIO_LED_PIN, config.GPIO_BUZZER_PIN)
     except ImportError:
-        logger.warning("RPi.GPIO not available — GPIO feedback disabled.")
-    return _gpio_initialised
+        _gpio_logger.warning("RPi.GPIO not available — GPIO disabled.")
+    return _gpio_ready
 
 
-def gpio_feedback_success() -> None:
-    """Blink LED + short beep to signal successful recognition."""
-    if not (config.USE_GPIO and _gpio_initialised):
+def gpio_pulse() -> None:
+    """Short LED + buzzer pulse to signal a successful attendance mark."""
+    if not (config.USE_GPIO and _gpio_ready):
         return
     import threading, time
-    import RPi.GPIO as GPIO  # type: ignore
-
-    def _pulse():
-        GPIO.output(config.GPIO_LED_PIN, GPIO.HIGH)
-        GPIO.output(config.GPIO_BUZZER_PIN, GPIO.HIGH)
-        time.sleep(0.15)
-        GPIO.output(config.GPIO_LED_PIN, GPIO.LOW)
-        GPIO.output(config.GPIO_BUZZER_PIN, GPIO.LOW)
-
-    threading.Thread(target=_pulse, daemon=True).start()
+    try:
+        import RPi.GPIO as GPIO  # type: ignore
+        def _pulse():
+            GPIO.output(config.GPIO_LED_PIN,    GPIO.HIGH)
+            GPIO.output(config.GPIO_BUZZER_PIN, GPIO.HIGH)
+            time.sleep(0.15)
+            GPIO.output(config.GPIO_LED_PIN,    GPIO.LOW)
+            GPIO.output(config.GPIO_BUZZER_PIN, GPIO.LOW)
+        threading.Thread(target=_pulse, daemon=True).start()
+    except ImportError:
+        pass
 
 
 def gpio_cleanup() -> None:
-    """Clean up GPIO on exit."""
-    if not (config.USE_GPIO and _gpio_initialised):
+    """Release GPIO resources on exit."""
+    if not (config.USE_GPIO and _gpio_ready):
         return
     try:
         import RPi.GPIO as GPIO  # type: ignore
         GPIO.cleanup()
-        logger.info("GPIO cleaned up.")
-    except Exception:
+        _gpio_logger.info("GPIO cleaned up.")
+    except ImportError:
         pass
 
 
-# ──────────────────────────────────────────────────────────────────
-#  FPS tracker
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  FPS counter
+# ─────────────────────────────────────────────────────────────────
 
 class FPSCounter:
-    """Lightweight rolling-average FPS counter."""
+    """Rolling-average FPS counter."""
 
-    def __init__(self, window: int = 30):
+    def __init__(self, window: int = 20) -> None:
         self._times: list = []
         self._window = window
-        self._prev = None
+        self._prev: Optional[float] = None
 
     def tick(self) -> float:
         import time

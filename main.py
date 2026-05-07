@@ -1,167 +1,184 @@
-"""
-main.py — Entry point for the Face Recognition Attendance System.
+"""main.py — Face Attendance System v5 entry point.
 
-Menu
-────
-1. Enroll Student
-2. Take Attendance
-3. View Attendance
-4. View All Students
-5. Generate Daily Report
-6. Retrain Model
-7. Exit
+Default mode  (GUI)
+-------------------
+    python main.py
+
+CLI / automation mode
+---------------------
+    python main.py --cli                          # original text menu
+    python main.py --generate-report
+    python main.py --generate-report --start 2024-01-01 --end 2024-06-30
+    python main.py --report-absent
+    python main.py --report-absent --date 2024-06-15
+    python main.py --report-absent --email
+    python main.py --list-students
+    python main.py --view-attendance --date 2024-06-15
 """
 
+import argparse
+import logging
 import os
 import sys
-import logging
+import shutil
 
-# ── make sure all local modules are importable ────────────────────
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
-import utils
 import database
-import attendance
 import enroll
-import recognize
+import Recognition as recognition
+import Reports as reports
+import embeddings as emb_module
 
+logging.basicConfig(
+    level=config.LOG_LEVEL,
+    format=config.LOG_FORMAT,
+    datefmt=config.LOG_DATEFMT,
+    handlers=[
+        logging.FileHandler(config.LOG_FILE),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
 logger = logging.getLogger("attendance_system.main")
 
 
-# ──────────────────────────────────────────────────────────────────
-#  Startup
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Bootstrap
+# ─────────────────────────────────────────────────────────────────
 
 def _bootstrap() -> None:
-    """Initialise directories, DB, and attendance file."""
-    utils.ensure_dir(config.DATASET_DIR)
-    utils.ensure_dir(config.REPORT_DIR)
+    os.makedirs(config.DATASET_DIR, exist_ok=True)
+    os.makedirs(config.MODELS_DIR,  exist_ok=True)
+    os.makedirs(config.REPORTS_DIR, exist_ok=True)
     database.init_db()
-    attendance.init_attendance_file()
-    logger.info("System bootstrap complete.")
+    logger.info("System bootstrap complete (v5).")
 
 
-# ──────────────────────────────────────────────────────────────────
-#  Menu helpers
-# ──────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
+#  Interactive text menu  (--cli flag)
+# ─────────────────────────────────────────────────────────────────
 
-BANNER = r"""
-╔══════════════════════════════════════════════════╗
-║    FACE RECOGNITION ATTENDANCE SYSTEM  v1.0      ║
-║    Raspberry Pi  |  MediaPipe + OpenCV LBPH       ║
-╚══════════════════════════════════════════════════╝
-"""
+BANNER = """
+╔════════════════════════════════════════════════════════╗
+║   FACE ATTENDANCE SYSTEM  v5                           ║
+║   YuNet FP16  ·  ArcFace (recognition-only)  ·  SQLite ║
+╚════════════════════════════════════════════════════════╝"""
 
 MENU = """
-  ┌─────────────────────────────────────┐
-  │  1.  Enroll Student                 │
-  │  2.  Take Attendance (camera)       │
-  │  3.  View Today's Attendance        │
-  │  4.  View Attendance by Date        │
-  │  5.  View All Students              │
-  │  6.  Generate Daily Report          │
-  │  7.  Retrain Recognition Model      │
-  │  8.  Exit                           │
-  └─────────────────────────────────────┘
-"""
+  ┌──────────────────────────────────────────┐
+  │  1.  Enroll Student                      │
+  │  2.  Take Attendance  (threaded camera)  │
+  │  3.  View Today's Attendance             │
+  │  4.  View Attendance by Date             │
+  │  5.  View All Students                   │
+  │  6.  Remove Student                      │
+  │  7.  Generate Full Attendance Report     │
+  │  8.  Generate Absent Report              │
+  │  9.  Generate Daily Summary              │
+  │  10. Exit                                │
+  └──────────────────────────────────────────┘"""
 
 
-def _prompt(prompt_text: str) -> str:
-    return input(f"  {prompt_text}").strip()
+def _prompt(text: str) -> str:
+    return input(f"  {text}").strip()
 
 
-def _clear():
-    os.system("clear" if os.name != "nt" else "cls")
-
-
-# ──────────────────────────────────────────────────────────────────
-#  Menu handlers
-# ──────────────────────────────────────────────────────────────────
-
-def handle_enroll() -> None:
-    print("\n  ── Enroll New Student ──────────────────────────────\n")
+def _handle_enroll() -> None:
     enroll.enroll_student()
-    # Invalidate model so next recognition session retrains
-    if os.path.isfile(config.MODEL_FILE):
-        os.remove(config.MODEL_FILE)
-        logger.info("Stale model removed — will retrain on next recognition.")
 
 
-def handle_take_attendance() -> None:
-    print("\n  ── Take Attendance ─────────────────────────────────\n")
-    n = database.get_student_count()
-    if n == 0:
-        print("  No students enrolled.  Enroll at least one student first.\n")
+def _handle_take_attendance() -> None:
+    if database.get_student_count() == 0:
+        print("  No students enrolled. Add students first.\n")
         return
-    print(f"  {n} student(s) enrolled.")
-    recognize.run_recognition()
+    recognition.run_recognition()
 
 
-def handle_view_today() -> None:
-    attendance.print_attendance()
+def _handle_view_today() -> None:
+    database.print_attendance()
 
 
-def handle_view_by_date() -> None:
-    date_str = _prompt("Enter date (YYYY-MM-DD) [Enter = today]: ")
-    if not date_str:
-        date_str = utils.current_date()
-    attendance.print_attendance(date_str)
+def _handle_view_by_date() -> None:
+    d = _prompt("Date (YYYY-MM-DD) [Enter = today]: ")
+    database.print_attendance(d or None)
 
 
-def handle_view_students() -> None:
+def _handle_view_students() -> None:
     print()
     database.print_all_students()
 
 
-def handle_generate_report() -> None:
-    date_str = _prompt("Enter date (YYYY-MM-DD) [Enter = today]: ")
-    if not date_str:
-        date_str = utils.current_date()
-    path = attendance.generate_daily_report(date_str)
-    print(f"\n  Report saved to: {path}\n")
+def _handle_remove() -> None:
+    database.print_all_students()
+    if database.get_student_count() == 0:
+        return
+    sid = _prompt("Student ID to remove (Enter to cancel): ")
+    if not sid:
+        print("  Cancelled.\n")
+        return
+    student = database.get_student(sid)
+    if not student:
+        print(f"  [ERROR] Student '{sid}' not found.\n")
+        return
+    print(f"\n  Student : {student['name']}  (ID: {sid})")
+    if _prompt("Type YES to confirm deletion: ") != "YES":
+        print("  Cancelled.\n")
+        return
+    folder  = f"{sid}_{student['name'].replace(' ', '_')}"
+    img_dir = os.path.join(config.DATASET_DIR, folder)
+    if os.path.isdir(img_dir):
+        shutil.rmtree(img_dir)
+        print(f"  ✓ Images deleted: {img_dir}")
+    database.delete_student(sid)
+    print(f"  ✓ '{student['name']}' removed from database.")
+    emb_module.get_embedding_db().reload()
+    print("  ✓ Embedding database refreshed.\n")
 
 
-def handle_retrain() -> None:
-    print("\n  ── Retrain Recognition Model ───────────────────────\n")
-    if os.path.isfile(config.MODEL_FILE):
-        os.remove(config.MODEL_FILE)
-    model = recognize.train_model(force=True)
-    if model:
-        print("  Model training successful.\n")
-    else:
-        print("  Training failed — ensure students are enrolled.\n")
+def _handle_full_report() -> None:
+    start = _prompt("Start date YYYY-MM-DD (Enter = 30 days ago): ")
+    end   = _prompt("End date   YYYY-MM-DD (Enter = today):       ")
+    path  = reports.generate_attendance_report(start or None, end or None)
+    print(f"  Saved → {path}\n")
 
 
-# ──────────────────────────────────────────────────────────────────
-#  Main loop
-# ──────────────────────────────────────────────────────────────────
+def _handle_absent_report() -> None:
+    d    = _prompt("Date (YYYY-MM-DD) [Enter = today]: ")
+    mail = _prompt("Send email? [y/N]: ").lower() == "y"
+    path = reports.generate_absent_report(d or None, mail)
+    print(f"  Saved → {path}\n")
+
+
+def _handle_daily_summary() -> None:
+    d    = _prompt("Date (YYYY-MM-DD) [Enter = today]: ")
+    path = reports.generate_daily_summary(d or None)
+    print(f"  Saved → {path}\n")
+
 
 HANDLERS = {
-    "1": handle_enroll,
-    "2": handle_take_attendance,
-    "3": handle_view_today,
-    "4": handle_view_by_date,
-    "5": handle_view_students,
-    "6": handle_generate_report,
-    "7": handle_retrain,
+    "1": _handle_enroll,
+    "2": _handle_take_attendance,
+    "3": _handle_view_today,
+    "4": _handle_view_by_date,
+    "5": _handle_view_students,
+    "6": _handle_remove,
+    "7": _handle_full_report,
+    "8": _handle_absent_report,
+    "9": _handle_daily_summary,
 }
 
 
-def main() -> None:
+def _run_menu() -> None:
     _bootstrap()
     print(BANNER)
-    print(f"  Today: {utils.current_date()}    Students enrolled: {database.get_student_count()}")
-
+    print(f"\n  Students enrolled : {database.get_student_count()}")
     while True:
         print(MENU)
-        choice = _prompt("Select option [1-8]: ")
-
-        if choice == "8":
+        choice = _prompt("Select [1-10]: ")
+        if choice == "10":
             print("\n  Goodbye!\n")
-            utils.gpio_cleanup()
             sys.exit(0)
-
         handler = HANDLERS.get(choice)
         if handler:
             try:
@@ -169,10 +186,66 @@ def main() -> None:
             except KeyboardInterrupt:
                 print("\n  Interrupted — returning to menu.\n")
             except Exception as exc:
-                logger.exception("Unhandled error in menu handler %s", choice)
+                logger.exception("Error in handler %s", choice)
                 print(f"\n  [ERROR] {exc}\n")
         else:
-            print("  Invalid option. Please choose 1–8.\n")
+            print("  Invalid option. Choose 1–10.\n")
+
+
+# ─────────────────────────────────────────────────────────────────
+#  CLI (argparse)
+# ─────────────────────────────────────────────────────────────────
+
+def _build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="main.py",
+        description="Face Attendance System v5",
+    )
+    p.add_argument("--gui",             action="store_true",
+                   help="Launch the interactive text menu instead of the GUI.")
+    p.add_argument("--generate-report", action="store_true")
+    p.add_argument("--report-absent",   action="store_true")
+    p.add_argument("--list-students",   action="store_true")
+    p.add_argument("--view-attendance", action="store_true")
+    p.add_argument("--start",  metavar="YYYY-MM-DD", default=None)
+    p.add_argument("--end",    metavar="YYYY-MM-DD", default=None)
+    p.add_argument("--date",   metavar="YYYY-MM-DD", default=None)
+    p.add_argument("--email",  action="store_true")
+    return p
+
+
+def main() -> None:
+    parser = _build_parser()
+    args   = parser.parse_args()
+
+    _bootstrap()
+
+    if args.generate_report:
+        path = reports.generate_attendance_report(args.start, args.end)
+        print(f"\n  Report saved → {path}\n")
+        sys.exit(0)
+
+    if args.report_absent:
+        path = reports.generate_absent_report(args.date, args.email)
+        print(f"\n  Absent report → {path}\n")
+        sys.exit(0)
+
+    if args.list_students:
+        database.print_all_students()
+        sys.exit(0)
+
+    if args.view_attendance:
+        database.print_attendance(args.date or None)
+        sys.exit(0)
+
+    if args.gui:
+     from gui import launch
+     launch()
+
+
+    # ── Default: launch GUI ───────────────────────────────────────
+    _run_menu()
+
 
 
 if __name__ == "__main__":
