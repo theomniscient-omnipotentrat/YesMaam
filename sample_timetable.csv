@@ -1,0 +1,7 @@
+student_id,day_of_week,start_time,end_time,expected_zone,activity
+32146972,Wednesday,09:00,12:00,Classroom A,AI Lecture
+1,Wednesday,10:15,11:15,Computer Lab,Programming Lab
+S002,Thursday,09:00,10:00,Classroom A,AI Lecture
+S002,Thursday,10:15,11:15,Library,Independent Study
+S003,Thursday,09:00,10:00,Computer Lab,Database Lab
+S003,Thursday,10:15,11:15,Classroom A,Software Engineering

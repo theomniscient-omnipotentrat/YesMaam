@@ -1,27 +1,365 @@
-2026-04-21 00:09:49 [DEBUG] matplotlib: matplotlib data path: C:\Users\ssamu\PycharmProjects\Downloads\Lib\site-packages\matplotlib\mpl-data
-2026-04-21 00:09:49 [DEBUG] matplotlib: CONFIGDIR=C:\Users\ssamu\.matplotlib
-2026-04-21 00:09:49 [DEBUG] matplotlib: interactive is False
-2026-04-21 00:09:49 [DEBUG] matplotlib: platform is win32
-2026-04-21 00:09:49 [DEBUG] matplotlib: CACHEDIR=C:\Users\ssamu\.matplotlib
-2026-04-21 00:09:49 [DEBUG] matplotlib.font_manager: Using fontManager instance from C:\Users\ssamu\.matplotlib\fontlist-v390.json
-2026-04-21 00:24:32 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
-2026-04-21 00:24:32 [INFO] attendance_system.attendance: Attendance file created at C:\Users\ssamu\Downloads\Rasp\attendance.csv
-2026-04-21 00:24:32 [INFO] attendance_system.main: System bootstrap complete.
-2026-04-21 00:25:08 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
-2026-04-21 00:25:08 [INFO] attendance_system.main: System bootstrap complete.
-2026-04-21 00:25:19 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
-2026-04-21 00:25:19 [INFO] attendance_system.main: System bootstrap complete.
-2026-04-21 00:25:57 [INFO] attendance_system: Camera 0 opened (640x480)
-2026-04-21 00:26:46 [INFO] attendance_system: Camera released.
-2026-04-21 00:26:46 [INFO] attendance_system.database: Student added: Samuel George — Samuel
-2026-04-21 00:26:59 [INFO] attendance_system: Camera 0 opened (640x480)
-2026-04-21 00:27:14 [INFO] attendance_system: Camera released.
-2026-04-21 00:27:16 [INFO] attendance_system: Camera 0 opened (640x480)
-2026-04-21 00:27:17 [INFO] attendance_system.attendance: Attendance marked — Samuel George (Samuel) at 2026-04-21 00:27:17
-2026-04-21 00:27:17 [INFO] attendance_system.recognize: Marked attendance — Samuel George (Samuel)  conf=68.5
-2026-04-21 00:27:36 [INFO] attendance_system: Camera released.
-2026-04-21 00:27:44 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
-2026-04-21 00:28:06 [INFO] attendance_system.recognize: Loading cached model from C:\Users\ssamu\Downloads\Rasp\face_model.yml
-2026-04-21 00:28:08 [INFO] attendance_system: Camera 0 opened (640x480)
-2026-04-21 00:28:14 [INFO] attendance_system: Camera released.
-2026-04-21 00:30:50 [INFO] attendance_system.database: Database initialised at C:\Users\ssamu\Downloads\Rasp\students.db
+2026-05-13 10:36:19 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:36:19 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:36:19 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:36:19 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 10:36:19 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:36:19 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:36:19 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:36:19 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 10:39:30 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:39:30 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:39:30 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:39:30 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 10:39:30 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:39:30 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:39:30 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:39:30 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 10:40:00 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 10:40:02 [INFO] attendance_system.detector: Downloading YuNet model …
+2026-05-13 10:40:03 [INFO] attendance_system.detector: YuNet model saved: C:\Users\ssamu\Downloads\raspV7\models\face_detection_yunet_2023mar.onnx
+2026-05-13 10:41:12 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 10:41:13 [INFO] attendance_system.enroll: EnrollConsumer process stopped.
+2026-05-13 10:41:15 [INFO] attendance_system.database: Student added: 1 — 1
+2026-05-13 10:41:15 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 10:41:15 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 10:41:15 [INFO] attendance_system.enroll: Enrolled 1 (1) — 3 shots
+2026-05-13 10:41:19 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 10:41:19 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=20740).
+2026-05-13 10:41:21 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 10:41:21 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 10:41:21 [INFO] attendance_system.camera: FrameConsumer process started (PID=20740).
+2026-05-13 10:41:27 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 10:41:27 [INFO] attendance_system.database: Attendance marked: 1 (1) at 2026-05-13 10:41:27
+2026-05-13 10:41:27 [INFO] attendance_system.camera: Marked: 1 (1)
+2026-05-13 10:43:04 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 10:43:04 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 10:43:05 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 10:43:15 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Demo campus timetable seeded: 10 rows
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:01 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus day simulated for 2026-05-13: 4 events, 2 alerts
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:44:02 [INFO] attendance_system.campus_monitoring: Campus monitoring report saved: C:\Users\ssamu\Downloads\raspV7\reports\campus_monitoring_report.csv
+2026-05-13 10:44:38 [INFO] attendance_system.reports: Daily summary: 1/1 present on 2026-05-13 -> C:\Users\ssamu\Downloads\raspV7\reports\daily_summary_2026-05-13.csv
+2026-05-13 10:58:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:47 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 10:58:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:47 [INFO] attendance_system.campus_monitoring: Demo campus timetable seeded: 0 rows
+2026-05-13 10:58:47 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Processed campus video sample_videos\library_demo.mp4 for zone=Library: 0 event(s), 0 alert(s)
+2026-05-13 10:58:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 10:58:48 [INFO] attendance_system.campus_monitoring: Campus monitoring report saved: C:\Users\ssamu\Downloads\raspV7\reports\campus_monitoring_report.csv
+2026-05-13 11:03:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:26 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:26 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 11:03:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:26 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:26 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:26 [INFO] attendance_system.campus_monitoring: Demo campus timetable seeded: 0 rows
+2026-05-13 11:03:26 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 11:03:34 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Processed campus video sample_videos\library_demo.mp4 for zone=Library: 0 event(s), 0 alert(s)
+2026-05-13 11:03:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:03:37 [INFO] attendance_system.campus_monitoring: Campus monitoring report saved: C:\Users\ssamu\Downloads\raspV7\reports\campus_monitoring_report.csv
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Demo campus timetable seeded: 0 rows
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:47 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus day simulated for 2026-05-13: 4 events, 2 alerts
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:04:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:04:48 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:18 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:18 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:18 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:18 [INFO] attendance_system.main: System bootstrap complete (v4).
+2026-05-13 11:05:18 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:18 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:18 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:18 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:18 [INFO] attendance_system.campus_monitoring: Demo campus timetable seeded: 0 rows
+2026-05-13 11:05:18 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 11:05:25 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Processed campus video sample_videos\library_demo.mp4 for zone=Library: 0 event(s), 0 alert(s)
+2026-05-13 11:05:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7\attendance_system.db
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring tables ready.
+2026-05-13 11:05:28 [INFO] attendance_system.campus_monitoring: Campus monitoring report saved: C:\Users\ssamu\Downloads\raspV7\reports\campus_monitoring_report.csv
+2026-05-13 12:18:13 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:18:28 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:21:57 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:21:57 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:21:57 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:21:57 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:22:43 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 12:23:01 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 12:23:03 [INFO] attendance_system.enroll: EnrollConsumer process stopped.
+2026-05-13 12:23:04 [INFO] attendance_system.database: Student added: 32146972 — Sam
+2026-05-13 12:23:04 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:23:04 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:23:04 [INFO] attendance_system.enroll: Enrolled 32146972 (Sam) — 3 shots
+2026-05-13 12:23:12 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 12:23:12 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=7132).
+2026-05-13 12:23:13 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:23:13 [INFO] attendance_system.camera: FrameConsumer process started (PID=7132).
+2026-05-13 12:23:13 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 12:23:21 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 12:23:21 [INFO] attendance_system.database: Attendance marked: 32146972 (Sam) at 2026-05-13 12:23:21
+2026-05-13 12:23:21 [INFO] attendance_system.camera: Marked: 32146972 (Sam)
+2026-05-13 12:23:31 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 12:23:31 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 12:23:32 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 12:23:42 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 12:32:51 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:32:51 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:32:51 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:32:51 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:40:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:40:37 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:40:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:40:37 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:42:53 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:42:55 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 12:46:23 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 12:46:23 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=21828).
+2026-05-13 12:46:24 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:46:24 [INFO] attendance_system.camera: FrameConsumer process started (PID=21828).
+2026-05-13 12:46:25 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 12:46:32 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 12:46:42 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 12:46:43 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 12:46:43 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 12:46:53 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 12:48:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:48:48 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:48:48 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 12:48:48 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 12:50:12 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 12:50:18 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 13:00:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 13:00:37 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 13:00:37 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 13:00:37 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 13:00:43 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 13:00:43 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 13:00:43 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=7404).
+2026-05-13 13:00:43 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 13:00:43 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 13:00:43 [INFO] attendance_system.camera: FrameConsumer process started (PID=7404).
+2026-05-13 13:00:44 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 13:00:47 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 13:01:46 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 13:01:46 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 13:01:47 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 13:02:14 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 13:02:14 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 13:02:14 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV7 - Copy\attendance_system.db
+2026-05-13 13:02:14 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 13:02:16 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 13:02:16 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 13:02:16 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=14436).
+2026-05-13 13:02:16 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 13:02:16 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 13:02:16 [INFO] attendance_system.camera: FrameConsumer process started (PID=14436).
+2026-05-13 13:02:17 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 13:02:20 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 13:02:26 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 13:02:27 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 13:02:27 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 13:02:37 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 14:02:23 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:03:38 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:03:53 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:04:07 [INFO] attendance_system.database: Student added: 11 â€” 1
+2026-05-13 14:04:07 [INFO] attendance_system.embeddings: EmbeddingDatabase: 2 embedding(s) loaded.
+2026-05-13 14:04:07 [INFO] attendance_system.embeddings: EmbeddingDatabase: 2 embedding(s) loaded.
+2026-05-13 14:04:07 [INFO] attendance_system.enroll: Enrolled 11 (1) â€” 3 shots
+2026-05-13 14:04:13 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 14:04:13 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=2084).
+2026-05-13 14:04:14 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 14:04:16 [INFO] attendance_system.database: Attendance marked: 11 (1) at 2026-05-13 14:04:16
+2026-05-13 14:04:16 [INFO] attendance_system.camera: Marked: 11 (1)
+2026-05-13 14:04:25 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 14:04:25 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 14:04:35 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 14:10:58 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:10:58 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:11:01 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:11:02 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:11:56 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:11:56 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:12:04 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:12:06 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:12:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:17:38 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:17:50 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:18:00 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:18:26 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:19:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:19:47 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:19:59 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:19:59 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:20:12 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:20:12 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:21:49 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:23:44 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:23:44 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 14:23:44 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:23:44 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 14:24:25 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:24:26 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 14:24:38 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:24:39 [INFO] attendance_system.enroll: EnrollConsumer process stopped.
+2026-05-13 14:24:39 [INFO] attendance_system.database: Student added: 1 — test1
+2026-05-13 14:24:39 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 14:24:39 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 14:24:39 [INFO] attendance_system.enroll: Enrolled 1 (test1) — 3 shots
+2026-05-13 14:24:45 [INFO] attendance_system.camera: AttendanceWorker started.
+2026-05-13 14:24:45 [INFO] attendance_system.camera: AttendancePipeline started (consumer PID=18100).
+2026-05-13 14:24:45 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 14:24:45 [INFO] attendance_system.embeddings: EmbeddingDatabase: 1 embedding(s) loaded.
+2026-05-13 14:24:45 [INFO] attendance_system.camera: FrameConsumer process started (PID=18100).
+2026-05-13 14:24:45 [INFO] attendance_system.camera: Camera 0 opened.
+2026-05-13 14:24:48 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:24:48 [INFO] attendance_system.database: Attendance marked: 1 (test1) at 2026-05-13 14:24:48
+2026-05-13 14:24:48 [INFO] attendance_system.camera: Marked: 1 (test1)
+2026-05-13 14:25:03 [INFO] attendance_system.camera: AttendanceWorker stopped.
+2026-05-13 14:25:04 [INFO] attendance_system.camera: FrameProducer: camera released.
+2026-05-13 14:25:04 [INFO] attendance_system.camera: FrameConsumer process stopped.
+2026-05-13 14:25:14 [INFO] attendance_system.camera: AttendancePipeline stopped.
+2026-05-13 14:27:25 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:27:25 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 14:27:25 [INFO] attendance_system.database: Database ready: C:\Users\ssamu\Downloads\raspV8\attendance_system.db
+2026-05-13 14:27:25 [INFO] attendance_system.main: System bootstrap complete with campus simulation.
+2026-05-13 14:27:43 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:27:44 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 14:28:07 [INFO] attendance_system.embeddings: InsightFace loaded (model=buffalo_sc, recognition-only, ctx=-1)
+2026-05-13 14:28:09 [INFO] attendance_system.enroll: EnrollConsumer process stopped.
+2026-05-13 14:28:10 [INFO] attendance_system.database: Student added: 32146972 — Sam
+2026-05-13 14:28:10 [INFO] attendance_system.embeddings: EmbeddingDatabase: 2 embedding(s) loaded.
+2026-05-13 14:28:10 [INFO] attendance_system.embeddings: EmbeddingDatabase: 2 embedding(s) loaded.
+2026-05-13 14:28:10 [INFO] attendance_system.enroll: Enrolled 32146972 (Sam) — 3 shots
+2026-05-13 14:31:03 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)
+2026-05-13 14:32:21 [INFO] attendance_system.detector: YuNet ready (FP16, internal_w=320, score>=0.70)

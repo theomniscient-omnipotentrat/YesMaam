@@ -1,310 +1,115 @@
-# Face Recognition Attendance System
-### Raspberry Pi · MediaPipe · OpenCV LBPH · Python 3
+# Face Attendance System v4 — Pi 5 Optimised
 
----
+## Quick Start
 
-## Project Structure
-
-```
-face_attendance/
-├── main.py           # CLI menu entry point
-├── gui.py            # Optional Tkinter GUI
-├── config.py         # All tuneable constants
-├── utils.py          # Logging, camera, drawing, GPIO helpers
-├── database.py       # SQLite student records
-├── enroll.py         # Student enrollment (camera capture)
-├── recognize.py      # Real-time face recognition + attendance marking
-├── attendance.py     # CSV attendance, duplicate prevention, reports
-├── requirements.txt  # Python dependencies
-│
-├── dataset/          # Auto-created on first enroll
-│   └── S001_Jane_Doe/
-│       ├── 20240101_120000_000001.jpg
-│       └── ...
-├── students.db       # SQLite database (auto-created)
-├── attendance.csv    # Attendance records (auto-created)
-├── face_model.yml    # Trained LBPH model (auto-created)
-├── reports/          # Daily text reports (auto-created)
-└── system.log        # Application log
-```
-
----
-
-## How It Works
-
-```
-Camera frame
-    │
-    ▼
-MediaPipe Face Detection ──► bounding boxes (fast, CPU-only)
-    │
-    ▼
-Crop & grayscale face ROI
-    │
-    ▼
-OpenCV LBPH Recognizer ──► label + confidence score
-    │
-    ▼
-Consecutive-frame vote buffer (5 frames) ──► stable identity
-    │
-    ▼
-Confidence < threshold? ──► Mark attendance in CSV
-                             Log to students.db
-                             GPIO LED + buzzer pulse
-```
-
----
-
-## Raspberry Pi Setup
-
-### 1 — Enable the Camera
-
+### 1. Install dependencies
 ```bash
-sudo raspi-config
-# Interface Options ► Camera ► Enable
-sudo reboot
-```
-
-### 2 — Update the system
-
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-### 3 — Install system-level dependencies
-
-```bash
-sudo apt install -y \
-    python3-pip \
-    python3-venv \
-    libatlas-base-dev \
-    libopenblas-dev \
-    libjpeg-dev \
-    libhdf5-dev \
-    libhdf5-serial-dev \
-    python3-tk \
-    v4l-utils
-```
-
-### 4 — Verify camera is visible
-
-```bash
-v4l2-ctl --list-devices
-# Expected: /dev/video0 (or /dev/video1)
-```
-
-### 5 — Create Python virtual environment
-
-```bash
-cd ~
-python3 -m venv venv_attendance
-source venv_attendance/bin/activate
-```
-
-### 6 — Install Python packages
-
-```bash
-pip install --upgrade pip
 pip install -r requirements.txt
+# For tkinter on Pi OS Lite:
+sudo apt install python3-tk
 ```
 
-> **On Raspberry Pi 4 (ARMv7/ARMv8)** use the pre-built wheels:
->
-> ```bash
-> pip install opencv-contrib-python==4.8.0.76
-> pip install mediapipe-rpi4          # community ARM wheel
-> # or build from source if the above is unavailable
-> ```
->
-> MediaPipe's official ARM wheels:
-> https://github.com/nicholasgasior/mediapipe-rpi
-
-### 7 — (Optional) Enable GPIO feedback
-
-Edit `config.py`:
-```python
-USE_GPIO     = True
-GPIO_LED_PIN = 17    # BCM numbering
-GPIO_BUZZER_PIN = 27
-```
-
-Wire up:
-```
-Pi Pin 11 (GPIO17) ── 220Ω ── LED (+) ── GND
-Pi Pin 13 (GPIO27) ── NPN transistor base ── Buzzer
-```
-
----
-
-## Running the System
-
-### CLI (recommended for Pi)
-
-```bash
-source ~/venv_attendance/bin/activate
-cd ~/face_attendance
-python main.py
-```
-
-```
-╔══════════════════════════════════════════════════╗
-║    FACE RECOGNITION ATTENDANCE SYSTEM  v1.0      ║
-╚══════════════════════════════════════════════════╝
-
-  ┌─────────────────────────────────────┐
-  │  1.  Enroll Student                 │
-  │  2.  Take Attendance (camera)       │
-  │  3.  View Today's Attendance        │
-  │  4.  View Attendance by Date        │
-  │  5.  View All Students              │
-  │  6.  Generate Daily Report          │
-  │  7.  Retrain Recognition Model      │
-  │  8.  Exit                           │
-  └─────────────────────────────────────┘
-```
-
-### GUI (requires display / VNC)
-
+### 2. Launch GUI
 ```bash
 python gui.py
 ```
 
----
-
-## Step-by-Step Usage
-
-### Enroll a Student
-
-1. Select **1. Enroll Student**
-2. Enter Student ID (e.g. `S001`) and full name (e.g. `Jane Doe`)
-3. A camera window opens — press **SPACE** to start capturing
-4. Look directly at the camera; slowly turn head slightly left/right
-5. 30 images are captured automatically
-6. The student record is saved to SQLite; model will retrain on next run
-
-Dataset folder created:
-```
-dataset/S001_Jane_Doe/
-    20240101_120000_001.jpg  ...  (30 images)
-```
-
-### Take Attendance
-
-1. Select **2. Take Attendance**
-2. Camera window opens showing real-time detection
-3. Student stands in front of camera
-4. When recognised with confidence ≥ threshold for 5 consecutive frames,
-   attendance is automatically marked in `attendance.csv`
-5. A green overlay and optional LED/beep confirms the mark
-6. Press **Q** to stop
-
-### Keyboard Controls (in camera window)
-
-| Key | Action |
-|-----|--------|
-| `q` | Quit recognition / enrollment |
-| `s` | Save current frame as snapshot |
-| `r` | Restart camera |
-| `t` | Retrain model on-the-fly |
-| `Space` | Start capture (enrollment only) |
-
----
-
-## attendance.csv Format
-
-```
-student_id,student_name,date,time,status
-S001,Jane Doe,2024-01-15,09:03:22,Present
-S002,John Smith,2024-01-15,09:05:11,Present
-```
-
----
-
-## Tuning for Your Environment
-
-Edit `config.py`:
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `RECOGNITION_THRESHOLD` | 70 | LBPH distance; **lower = stricter**. Try 60–80. |
-| `CONSECUTIVE_FRAMES` | 5 | Frames face must be stable before marking. |
-| `ENROLL_IMAGES_COUNT` | 30 | More images → better accuracy, longer enrolment. |
-| `MIN_DETECTION_CONFIDENCE` | 0.6 | MediaPipe sensitivity. |
-| `FRAME_SCALE` | 0.5 | Downscale for faster detection. Lower = faster. |
-| `ATTENDANCE_COOLDOWN_SECS` | 60 | Prevents same student re-marking within N seconds. |
-
----
-
-## Performance on Raspberry Pi 4
-
-| Setting | FPS (typical) |
-|---------|--------------|
-| 640×480, scale=0.5 | 12–18 FPS |
-| 640×480, scale=0.25 | 18–25 FPS |
-| 320×240, scale=0.5 | 22–30 FPS |
-
-Tips:
-- Close unused processes
-- Use `FRAME_SCALE = 0.25` for maximum speed
-- Run headless (no GUI) saves ~3 FPS
-
----
-
-## Troubleshooting
-
-**Camera not found**
+### 3. Launch CLI (original menu interface)
 ```bash
-ls /dev/video*          # check device exists
-sudo usermod -aG video $USER   # add user to video group
-```
-
-**Low accuracy**
-- Re-enroll in consistent lighting
-- Increase `ENROLL_IMAGES_COUNT` to 50
-- Lower `RECOGNITION_THRESHOLD` to 60
-
-**MediaPipe import error on Pi**
-```bash
-pip install mediapipe-rpi4
-# or
-pip install mediapipe==0.9.3.0   # older version with ARM support
-```
-
-**cv2.face not found**
-```bash
-pip install opencv-contrib-python==4.8.0.76
+python main.py
 ```
 
 ---
 
-## Auto-start on Boot (systemd)
+## GUI Overview
+
+| Section | Description |
+|---|---|
+| **Dashboard** | Live stats (enrolled, present, absent, rate) + today's table |
+| **Enroll Student** | Enter ID + name, launch camera, SPACE to capture |
+| **Take Attendance** | Launch recognition camera; marks rows in real-time |
+| **View by Date** | Query attendance for any date |
+| **Students** | Full enrolled list; remove students |
+| **Reports** | Export CSV reports (full, absent, daily summary) |
+| **Campus Sim** | Simulate zone-based campus monitoring and timetable mismatch alerts |
+
+---
+
+## Simulated Campus Monitoring
+
+The project now includes a small simulation layer that matches the proposal's campus-monitoring objective without performing continuous real-world surveillance.
 
 ```bash
-sudo nano /etc/systemd/system/attendance.service
+# Generate simulated zone events and timetable mismatch alerts
+python main.py --simulate-campus --date 2026-05-07 --anomaly-rate 0.30
+
+# Export the simulated campus monitoring CSV report
+python main.py --campus-report --date 2026-05-07
 ```
 
-```ini
-[Unit]
-Description=Face Attendance System
-After=multi-user.target
+Simulation data is stored in SQLite using these tables:
 
-[Service]
-Type=simple
-User=pi
-WorkingDirectory=/home/pi/face_attendance
-ExecStart=/home/pi/venv_attendance/bin/python main.py
-Restart=on-failure
+| Table | Purpose |
+|---|---|
+| `campus_zones` | Known zones such as Classroom A, Computer Lab, Library, Cafeteria |
+| `campus_timetable` | Expected student location by weekday and time range |
+| `campus_zone_events` | Simulated detections in campus zones |
+| `campus_alerts` | Mismatches between expected zone and detected zone |
 
-[Install]
-WantedBy=multi-user.target
-```
+The feature is intentionally labelled as a simulation for ethical and academic reasons. It demonstrates smart-campus logic while keeping real biometric use limited to attendance.
 
-```bash
-sudo systemctl enable attendance
-sudo systemctl start attendance
-```
+## Pi 5 Optimisations Applied
+
+| File | Change | Benefit |
+|---|---|---|
+| `detector.py` | `DNN_TARGET_CPU_FP16` + 320 px internal downscale | ~3× faster YuNet (~40 ms → ~12 ms) |
+| `embeddings.py` | `allowed_modules=['recognition']` | −400 MB RAM, −70% load time |
+| `camera.py` | `FrameConsumer` → `multiprocessing.Process` | Real multi-core, bypasses GIL |
+| `camera.py` | 300 ms ArcFace throttle per face | −90% embedding CPU load |
+| `Recognition.py` | `waitKey(20)` | Wayland/X11 compositor breathing room |
+| `enroll.py` | Pipeline-style threaded UI | Non-blocking enrollment window |
+| `config.py` | `ENROLL_IMAGES_COUNT=3`, `CAMERA_WARMUP_SECS=0.5` | Faster enrollment |
 
 ---
 
-## License
-MIT — free to use in educational and non-commercial projects.
+## File Structure
+
+```
+attendance_system/
+├── gui.py           ← GUI entry point  (NEW)
+├── main.py          ← CLI entry point
+├── config.py        ← All constants
+├── camera.py        ← Producer/Consumer pipeline (multiprocessing)
+├── detector.py      ← YuNet ONNX face detection (FP16)
+├── embeddings.py    ← ArcFace embeddings (recognition-only)
+├── enroll.py        ← Threaded enrollment
+├── Recognition.py   ← Real-time attendance session
+├── Reports.py       ← CSV report generation
+├── campus_monitoring.py ← Simulated timetable + zone monitoring
+├── database.py      ← SQLite CRUD layer
+├── utils.py         ← Shared helpers
+└── requirements.txt
+```
+
+## Saved Video → Campus Simulation Sample Data
+
+You can use a saved video as repeatable sample input for the campus monitoring simulation. The video represents one simulated camera zone, such as `Library` or `Computer Lab`. The system samples frames, detects faces, recognises enrolled students using the existing ArcFace embedding database, and logs zone events into the campus simulation tables.
+
+Example:
+
+```bash
+python main.py --video-campus sample_videos/library_demo.mp4 \
+  --zone "Library" \
+  --date 2026-05-07 \
+  --start-time 09:00 \
+  --sample-every-seconds 2 \
+  --event-cooldown-seconds 60
+```
+
+Then export the report:
+
+```bash
+python main.py --campus-report --date 2026-05-07
+```
+
+Important: the video-based mode still requires students to be enrolled first. Unknown faces are counted but not logged as identified students. This keeps the feature suitable for a consent-based academic simulation rather than real continuous campus surveillance.
