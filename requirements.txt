@@ -1,0 +1,29 @@
+# requirements.txt — Face Recognition Attendance System v4 (Pi 5 Optimised)
+# pip install -r requirements.txt
+
+# Core vision
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0   # YuNet + FP16 DNN backend
+
+# Deep learning inference
+onnxruntime>=1.16.0            # CPU inference with ARM NEON optimisation
+
+# Face embeddings (recognition-only module loading)
+insightface>=0.7.3
+
+# Numerics
+numpy>=1.24.0
+
+# Reporting
+pandas>=2.0.0                  # optional — stdlib csv used as fallback
+
+# GUI
+# tkinter is bundled with Python — no pip install needed.
+# On Raspberry Pi OS Lite, install via:
+#   sudo apt install python3-tk
+
+# GPIO (Raspberry Pi only — optional)
+# RPi.GPIO>=0.7.1              # uncomment if USE_GPIO=True in config.py
+
+# SMTP email is stdlib — no extra package needed
+# SQLite3 is stdlib — no extra package needed
